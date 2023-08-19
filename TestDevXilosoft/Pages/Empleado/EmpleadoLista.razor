@@ -1,0 +1,46 @@
+﻿@page "/empleados"
+@using TestDevXilosoft.DTO;
+@using TestDevXilosoft.Service;
+
+@inject IEmpleadoService _service; 
+@inject NavigationManager _nav;
+
+<h3>Lista Empleados</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Cedula</th>
+            <th>Cargo</th>
+            <th>Area</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var e in _empleados)
+        {
+            <tr>
+                <td>@e.Nombre</td>
+                <td>@e.Cedula</td>
+                <td>@e.Cargo</td>
+                <td>@e.Area </td>
+                <td>
+                    <a href=@($"/empleados/{e.Id}")>Editar</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<a class="btn btn-primary" href="/empleados/0">Nuevo</a>
+
+
+@code {
+    private List<EmpleadoDTO> _empleados = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        _empleados = await _service.GetAll();
+    }
+}

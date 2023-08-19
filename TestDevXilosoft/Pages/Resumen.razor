@@ -1,0 +1,37 @@
+﻿@page "/"
+@page "/resumen"
+@using TestDevXilosoft.DTO;
+@using TestDevXilosoft.Service;
+
+@inject IResumenService _service;
+
+<h3>Resumen Maquinarias Asignadas</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Empleado</th>
+            <th>Maquinaria (Serie)</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var resumen in _resumenes)
+        {
+            <tr>
+                <td>@resumen.Empleado</td>
+                <td>@resumen.Maquinaria</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    private List<ResumenDTO> _resumenes = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        _resumenes = await _service.Get();
+    }
+}

@@ -1,0 +1,59 @@
+﻿@page "/empleados/{Id:int}"
+@using TestDevXilosoft.DTO;
+@using TestDevXilosoft.Service;
+
+@inject IEmpleadoService _service;
+@inject NavigationManager _nav;
+
+<h3>Detalle del Empleado</h3>
+
+<form>
+    <div class="form-group">
+        <label for="campo1">Nombre:</label>
+        <input type="text" id="campo1" @bind="_empleado.Nombre" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="campo2">Cedula:</label>
+        <input type="text" id="campo2" @bind="_empleado.Cedula" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="campo3">Area: </label>
+        <input type="text" id="campo3" @bind="_empleado.Area" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="campo4">Cargo:</label>
+        <input type="text" id="campo4" @bind="_empleado.Cargo" class="form-control" />
+    </div>
+    <button class="btn btn-success" @onclick="Guardar">Guardar</button>
+</form>
+<a href="/empleados">Atras</a>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private EmpleadoDTO _empleado = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        if (Id != 0)
+        {
+            _empleado = await _service.GetById(Id);
+        }
+    }
+
+    private async Task Guardar()
+    {
+        await _service.SaveOrUpdate(new()
+            {
+                Id = Id,
+                Area = _empleado.Area,
+                Cargo = _empleado.Cargo,
+                Cedula = _empleado.Cedula,
+                Nombre = _empleado.Nombre
+            });
+        _nav.NavigateTo("/empleados");
+    }
+}
