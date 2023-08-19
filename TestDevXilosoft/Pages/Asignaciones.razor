@@ -4,6 +4,7 @@
 
 @inject IAsignacionService _service;
 @inject IEmpleadoService _empleadoService;
+@inject IJSRuntime _js;
 
 <h3>Asignaciones</h3>
 
@@ -84,6 +85,7 @@
     private async Task Guardar()
     {
         await _service.SaveOrUpdate(IdEmpleado, _asignaciones);
+        await _js.InvokeVoidAsync("alert", "Guardado");
         await Cargar();
     }
 }

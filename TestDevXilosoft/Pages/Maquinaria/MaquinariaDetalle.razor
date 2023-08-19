@@ -2,6 +2,7 @@
 @using TestDevXilosoft.DTO;
 @using TestDevXilosoft.Service;
 @inject IMaquinariaService _service;
+@inject NavigationManager _nav;
 
 <h3>Detalle de MAquinaria</h3>
 
@@ -14,7 +15,7 @@
         <label for="campo2">Serie:</label>
         <input type="text" id="campo2" @bind="_maquinaria.Serie" class="form-control" />
     </div>
-    <button class="btn btn-success" @onclick="Guardar">Guardar</button>
+    <button class="btn btn-success" @onclick="Guardar" type="button">Guardar</button>
 </form>
 <a href="/maquinarias">Atras</a>
 
@@ -37,5 +38,6 @@
     private async Task Guardar()
     {
         await _service.SaveOrUpdate(_maquinaria);
+        _nav.NavigateTo("/maquinarias");
     }
 }

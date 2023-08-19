@@ -24,7 +24,7 @@
         <label for="campo4">Cargo:</label>
         <input type="text" id="campo4" @bind="_empleado.Cargo" class="form-control" />
     </div>
-    <button class="btn btn-success" @onclick="Guardar">Guardar</button>
+    <button type="button" class="btn btn-success" @onclick="Guardar">Guardar</button>
 </form>
 <a href="/empleados">Atras</a>
 
@@ -54,6 +54,7 @@
                 Cedula = _empleado.Cedula,
                 Nombre = _empleado.Nombre
             });
+
         _nav.NavigateTo("/empleados");
     }
 }

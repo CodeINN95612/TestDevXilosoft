@@ -16,10 +16,10 @@ builder.Services.AddDbContext<TestDevXilosoftDatabase>(options =>
 
 //builder.Services.AddDatabase(builder.Configuration);
 
-builder.Services.AddTransient<IEmpleadoService, EmpleadoService>();
-builder.Services.AddTransient<IMaquinariaService, MaquinariaService>();
-builder.Services.AddTransient<IAsignacionService, AsignacionService>();
-builder.Services.AddTransient<IResumenService, ResumenService>();
+builder.Services.AddScoped<IEmpleadoService, EmpleadoService>();
+builder.Services.AddScoped<IMaquinariaService, MaquinariaService>();
+builder.Services.AddScoped<IAsignacionService, AsignacionService>();
+builder.Services.AddScoped<IResumenService, ResumenService>();
 
 var app = builder.Build();
 
