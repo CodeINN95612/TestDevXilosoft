@@ -7,5 +7,5 @@ public interface IAsignacionService
 {
     public Task<List<AsignacionDTO>> GetAll();
     public Task<List<AsignacionDTO>> GetByIdEmpleado(int idEmpleado);
-    public Task SaveOrUpdate(AsignacionDTO asignacion);
+    public Task SaveOrUpdate(int idEmpleado, List<AsignacionDTO> asignaciones);
 }

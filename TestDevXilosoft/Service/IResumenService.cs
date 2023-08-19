@@ -21,6 +21,7 @@ public class ResumenService : IResumenService
     public Task<List<ResumenDTO>> Get()
     {
         return _db.Asignaciones
+            .Where(a => a.Activo)
             .Select(a => new ResumenDTO
             {
                 Empleado = a.Empleado.Nombre,

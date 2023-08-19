@@ -36,7 +36,7 @@
                 <tr >
                     <td>@item.Maquinaria</td>
                     <td>@item.SerieMaquinaria</td>
-                    <td><input type="checkbox" @onclick="() => SeleciconarMaquinaria(item.IdMaquinaria)" /></td>
+                    <td><input type="checkbox" @bind="item.Activo" /></td>
                 </tr>
             }
         </tbody>
@@ -48,19 +48,24 @@
 @code {
     private List<EmpleadoDTO> _empleados = new();
     private List<AsignacionDTO> _asignaciones = new();
+    private int IdEmpleado = 0;
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
+        await Cargar();
+    }
 
+    private async Task Cargar()
+    {
         _empleados = await _empleadoService.GetAll();
     }
 
     private async Task Cambio(ChangeEventArgs args)
     {
-        int idEmpleado = Convert.ToInt32(args.Value);
-        if (idEmpleado != 0)
+        IdEmpleado = Convert.ToInt32(args.Value);
+        if (IdEmpleado != 0)
         {
-            _asignaciones = await _service.GetByIdEmpleado(idEmpleado);
+            _asignaciones = await _service.GetByIdEmpleado(IdEmpleado);
         }
         else
         {
@@ -76,8 +81,9 @@
         asignacion.Activo = !asignacion.Activo;
     }
 
-    private void Guardar()
+    private async Task Guardar()
     {
-        
+        await _service.SaveOrUpdate(IdEmpleado, _asignaciones);
+        await Cargar();
     }
 }

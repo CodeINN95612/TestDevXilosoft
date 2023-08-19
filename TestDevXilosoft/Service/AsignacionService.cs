@@ -27,7 +27,7 @@ public class AsignacionService : IAsignacionService
     public async Task<List<AsignacionDTO>> GetByIdEmpleado(int idEmpleado)
     {
         return await _db.Maquinarias
-            .Where(m => !m.Estado || (m.Asignacion != null && m.Asignacion.IdEmpleado == idEmpleado))
+            .Where(m => !m.Estado || ( (m.Estado && m.Asignacion != null) && m.Asignacion.IdEmpleado == idEmpleado))
             .Select(m => new AsignacionDTO
             {
                 IdEmpleado = m.Asignacion != null ? m.Asignacion.IdEmpleado : idEmpleado,
@@ -38,31 +38,37 @@ public class AsignacionService : IAsignacionService
             }).ToListAsync();
     }
 
-    public async Task SaveOrUpdate(AsignacionDTO asignacion)
+    public async Task SaveOrUpdate(int idEmpleado, List<AsignacionDTO> asignaciones)
     {
-        var asignacionEncontrada = await _db.Asignaciones
-            .Where(a => a.IdEmpleado == asignacion.IdEmpleado)
-            .Where(a => a.IdMaquinaria == asignacion.IdMaquinaria)
-            .FirstOrDefaultAsync();
-        var maquinaria = _db.Maquinarias.First(m => m.Id == asignacion.IdMaquinaria && !m.Estado);
-        if (asignacionEncontrada is null)
+        foreach (var asignacion in asignaciones)
         {
-            await _db.Asignaciones.AddAsync(new()
+            var asignacionEncontrada = await _db.Asignaciones
+                .Where(a => a.IdEmpleado == asignacion.IdEmpleado)
+                .Where(a => a.IdMaquinaria == asignacion.IdMaquinaria)
+                .FirstOrDefaultAsync();
+            var maquinaria = _db.Maquinarias.First(m => m.Id == asignacion.IdMaquinaria);
+            if (asignacionEncontrada is null)
             {
-                Id = asignacion.Id,
-                IdEmpleado = asignacion.IdEmpleado,
-                IdMaquinaria = maquinaria.Id,
-                Maquinaria = maquinaria,
-                Activo = true,
-            });
+                await _db.Asignaciones.AddAsync(new()
+                {
+                    Id = asignacion.Id,
+                    IdEmpleado = idEmpleado,
+                    IdMaquinaria = maquinaria.Id,
+                    Maquinaria = maquinaria,
+                    Activo = asignacion.Activo,
+                });
 
-            maquinaria.Estado = true; // Asignado
-        }
-        else
-        {
-            asignacionEncontrada.Maquinaria.Estado = false; //Disponible
-            asignacionEncontrada.Maquinaria = maquinaria;
-            asignacionEncontrada.IdMaquinaria = maquinaria.Id;
+                maquinaria.Estado = asignacion.Activo; // Asignado
+            }
+            else
+            {
+                asignacionEncontrada.Maquinaria.Estado = false; //Disponible
+                maquinaria.Estado = asignacion.Activo; // Asignado
+                asignacionEncontrada.Maquinaria = maquinaria;
+                asignacionEncontrada.IdMaquinaria = maquinaria.Id;
+                asignacionEncontrada.Activo = asignacion.Activo;
+                asignacionEncontrada.IdEmpleado = idEmpleado;
+            }
         }
         await _db.SaveChangesAsync();
     }
