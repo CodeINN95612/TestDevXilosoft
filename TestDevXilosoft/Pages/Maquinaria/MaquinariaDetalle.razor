@@ -1,0 +1,41 @@
+﻿@page "/maquinarias/{Id:int}"
+@using TestDevXilosoft.DTO;
+@using TestDevXilosoft.Service;
+@inject IMaquinariaService _service;
+
+<h3>Detalle de MAquinaria</h3>
+
+<form>
+    <div class="form-group">
+        <label for="campo1">Descripcion:</label>
+        <input type="text" id="campo1" @bind="_maquinaria.Descripcion" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="campo2">Serie:</label>
+        <input type="text" id="campo2" @bind="_maquinaria.Serie" class="form-control" />
+    </div>
+    <button class="btn btn-success" @onclick="Guardar">Guardar</button>
+</form>
+<a href="/maquinarias">Atras</a>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private MaquinariaDTO _maquinaria = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        if(Id != 0)
+        {
+            _maquinaria = await _service.GetById(Id);
+        }
+    }
+
+    private async Task Guardar()
+    {
+        await _service.SaveOrUpdate(_maquinaria);
+    }
+}

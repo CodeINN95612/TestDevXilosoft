@@ -1,0 +1,83 @@
+﻿@page "/asignaciones"
+@using TestDevXilosoft.DTO;
+@using TestDevXilosoft.Service;
+
+@inject IAsignacionService _service;
+@inject IEmpleadoService _empleadoService;
+
+<h3>Asignaciones</h3>
+
+<form>
+    <div class="form-group">
+        <label for="selectCampo">Selecciona un valor:</label>
+        <select id="selectCampo" class="form-control" @onchange="Cambio">
+                <option value="0">--Selecciona 1--</option>
+            @foreach (var e in _empleados)
+            {
+                <option value="@e.Id">@($"{e.Nombre} - {e.Cedula}")</option>
+            }
+        </select>
+    </div>
+</form>
+
+@if(_asignaciones.Count() > 0)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Maquinaria</th>
+                <th>Serie</th>
+                <th>Asignado</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in _asignaciones)
+            {
+                <tr >
+                    <td>@item.Maquinaria</td>
+                    <td>@item.SerieMaquinaria</td>
+                    <td><input type="checkbox" @onclick="() => SeleciconarMaquinaria(item.IdMaquinaria)" /></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <button class="btn btn-success" @onclick="Guardar">Guardar</button>
+}
+
+@code {
+    private List<EmpleadoDTO> _empleados = new();
+    private List<AsignacionDTO> _asignaciones = new();
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        _empleados = await _empleadoService.GetAll();
+    }
+
+    private async Task Cambio(ChangeEventArgs args)
+    {
+        int idEmpleado = Convert.ToInt32(args.Value);
+        if (idEmpleado != 0)
+        {
+            _asignaciones = await _service.GetByIdEmpleado(idEmpleado);
+        }
+        else
+        {
+            _asignaciones = new();
+        }
+        StateHasChanged();
+
+    }
+
+    private void SeleciconarMaquinaria(int idMaquinaria)
+    {
+        var asignacion = _asignaciones.First(a => a.IdMaquinaria == idMaquinaria);
+        asignacion.Activo = !asignacion.Activo;
+    }
+
+    private void Guardar()
+    {
+        
+    }
+}

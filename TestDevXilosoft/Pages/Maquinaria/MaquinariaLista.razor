@@ -1,5 +1,43 @@
-﻿<h3>Lista de Maquinarias</h3>
+﻿@page "/maquinarias"
+@using TestDevXilosoft.DTO;
+@using TestDevXilosoft.Service;
+
+@inject IMaquinariaService _service;
+
+<h3>Lista de Maquinarias</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Descripcion</th>
+            <th>Serie</th>
+            <th>Estado</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var m in _maquinarias)
+        {
+            <tr>
+                <td>@m.Descripcion</td>
+                <td>@m.Serie</td>
+                <td>@m.EstadoStr</td>
+                <td>
+                    <a href=@($"/maquinarias/{m.Id}")>Editar</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<a class="btn btn-primary" href="/maquinarias/0">Nuevo</a>
 
 @code {
+    private List<MaquinariaDTO> _maquinarias = new();
 
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        _maquinarias = await _service.GetAll();
+    }
 }

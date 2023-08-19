@@ -46,14 +46,13 @@ public class MaquinariaService : IMaquinariaService
                 Id = maquinaria.Id,
                 Serie = maquinaria.Serie,
                 Descripcion = maquinaria.Descripcion,
-                Estado = maquinaria.Estado
+                Estado = false
             });
         }
         else
         {
-            maquinariaEncontrada.Id = maquinaria.Id;
+            maquinariaEncontrada.Descripcion = maquinaria.Descripcion;
             maquinariaEncontrada.Serie = maquinaria.Serie;
-            maquinariaEncontrada.Estado = maquinaria.Estado;
         }
         await _db.SaveChangesAsync();
     }

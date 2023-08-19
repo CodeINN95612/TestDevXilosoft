@@ -17,4 +17,6 @@ public class Maquinaria
 
     [Required]
     public bool Estado { get; set; }
+
+    public virtual Asignacion? Asignacion { get; set; } = default!;
 }
